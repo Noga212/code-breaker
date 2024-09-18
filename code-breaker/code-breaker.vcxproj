@@ -132,6 +132,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="code-breaker.cpp" />
+    <ClCompile Include="Gui.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Gui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
