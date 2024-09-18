@@ -1,20 +1,65 @@
-// code-breaker.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+// Start of wxWidgets "Hello World" Program
+#include <wx/wx.h>
 
-#include <iostream>
-
-int main()
+class MyApp : public wxApp
 {
-    std::cout << "Hello World!\n";
+public:
+    bool OnInit() override;
+};
+
+wxIMPLEMENT_APP(MyApp);
+
+class MyFrame : public wxFrame
+{
+public:
+    MyFrame();
+
+private:
+    void OnExit(wxCommandEvent& event);
+    void OnAbout(wxCommandEvent& event);
+};
+
+enum
+{
+    ID_Hello = 1
+};
+
+bool MyApp::OnInit()
+{
+    MyFrame* frame = new MyFrame();
+    frame->Show(true);
+    return true;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+MyFrame::MyFrame()
+    : wxFrame(nullptr, wxID_ANY, "Code breaker")
+{
+    wxMenu* menuFile = new wxMenu;
+    menuFile->AppendSeparator();
+    menuFile->Append(wxID_EXIT);
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+    wxMenu* menuHelp = new wxMenu;
+    menuHelp->Append(wxID_ABOUT);
+
+    wxMenuBar* menuBar = new wxMenuBar;
+    menuBar->Append(menuHelp, "&Help");
+
+    SetMenuBar(menuBar);
+
+    CreateStatusBar();
+    SetStatusText("Code breaker version 0.1");
+
+    Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
+    Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
+}
+
+void MyFrame::OnExit(wxCommandEvent& event)
+{
+    Close(true);
+}
+
+void MyFrame::OnAbout(wxCommandEvent& event)
+{
+    wxMessageBox("This is a computer game version of the master-mind game",
+        "About code breaker", wxOK | wxICON_INFORMATION);
+}
