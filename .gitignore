@@ -67,3 +67,6 @@ ipch/
 *.VC.db
 *.VC.VC.opendb
 code-breaker/vxwidgets/
+
+!/code-breaker/vxwidgets/Install_vxwidgets
+
