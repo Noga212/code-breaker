@@ -14,6 +14,7 @@ enum {
 bool MyApp::OnInit() {
     MyFrame* frame = new MyFrame();
     frame->Show(true);
+    frame->SetSize(frame->GetEffectiveMinSize());
     return true;
 }
 
@@ -40,11 +41,16 @@ MyFrame::MyFrame()
 
     // Setup grid
     grid = new wxGrid(this, wxID_ANY);
-    grid->CreateGrid(10, 4); // 10 guesses, 4 pegs
-    grid->SetColLabelValue(0, "Peg 1");
-    grid->SetColLabelValue(1, "Peg 2");
-    grid->SetColLabelValue(2, "Peg 3");
-    grid->SetColLabelValue(3, "Peg 4");
+    grid->CreateGrid(10, 5);  // 10 guesses, 4 pegs + 1 for feedback
+
+    grid->SetColLabelValue(0, "Color 1");
+    grid->SetColLabelValue(1, "Color 2");
+    grid->SetColLabelValue(2, "Color 3");
+    grid->SetColLabelValue(3, "Color 4");
+
+    grid->SetColLabelValue(4, "Feedback");  // Label for the feedback column
+
+    grid->SetColSize(4, 170); //TODO : hardcoded - change by using a dedcated function
 
     // Input box for guesses
     input = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
@@ -75,24 +81,67 @@ void MyFrame::OnAbout(wxCommandEvent& event) {
         "About Mastermind", wxOK | wxICON_INFORMATION);
 }
 
-void MyFrame::OnSubmit(wxCommandEvent& event) 
+void MyFrame::OnSubmit(wxCommandEvent& event)
 {
-    if (currentGuessRow < 10) 
+    if (currentGuessRow < 10)
     {
         wxString guess = input->GetValue();
-        if (guess.length() == 4) 
+        if (guess.length() == 4)
         {
             if (ensureChars(guess))
             {
                 // Store the guess in the grid
-                for (int i = 0; i < 4; ++i) {
-                    
-                    grid->SetCellValue(currentGuessRow, i, guess.SubString(i, i));
-                    // TODO : add the logic of guess
+                std::vector<bool> exactMatches(4, false);  // Track exact matches
+                std::vector<bool> colorMatches(4, false);  // Track color matches
+                int correctPosition = 0;
+                int correctColor = 0;
+
+                // First pass: find exact matches
+                for (int i = 0; i < 4; ++i)
+                {
+                    if (guess.SubString(i, i) == secretCode[i])
+                    {
+                        exactMatches[i] = true;
+                        correctPosition++;
+                    }
                 }
+
+                // Second pass: find color matches (ignoring exact matches)
+                for (int i = 0; i < 4; ++i)
+                {
+                    if (!exactMatches[i])
+                    {
+                        for (int j = 0; j < 4; ++j)
+                        {
+                            if (!exactMatches[j] && !colorMatches[j] && guess.SubString(i, i) == secretCode[j])
+                            {
+                                colorMatches[j] = true;
+                                correctColor++;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Update the grid with the guess and the feedback
+                for (int i = 0; i < 4; ++i)
+                {
+                    grid->SetCellValue(currentGuessRow, i, guess.SubString(i, i));
+                }
+
+                // Add feedback: how many correct positions and colors
+                wxString feedback = wxString::Format("CorrPosition: %d, CorrColor: %d", correctPosition, correctColor);
+                grid->SetCellValue(currentGuessRow, 4, feedback);  // Assuming the 5th column is used for feedback TODO : Change to not hardcoded                
+
                 currentGuessRow++;
                 input->Clear();
-                // TODO: Implement feedback logic (e.g., number of correct pegs)
+
+                // Check if the player won
+                if (correctPosition == 4)
+                {
+                    wxMessageBox("Congratulations! You've guessed the code!", "You Win!", wxOK | wxICON_INFORMATION);
+                    Close(true);
+                }
             }
             else
             {
@@ -100,13 +149,13 @@ void MyFrame::OnSubmit(wxCommandEvent& event)
                     "Input Error", wxOK | wxICON_ERROR);
             }
         }
-        else 
+        else
         {
             wxMessageBox("Please enter exactly 4 characters (R, G, B, Y).",
                 "Input Error", wxOK | wxICON_ERROR);
         }
     }
-    else 
+    else
     {
         wxMessageBox("Maximum number of guesses reached.", "Game Over", wxOK | wxICON_INFORMATION);
     }
