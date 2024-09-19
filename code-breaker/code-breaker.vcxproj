@@ -74,6 +74,9 @@
     <Import Project="vxwidgets\wxwidgets.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(MSBuildProjectDirectory)\Gui\inc;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -133,10 +136,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="code-breaker.cpp" />
-    <ClCompile Include="Gui.cpp" />
+    <ClCompile Include="Gui\src\Gui.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Gui.h" />
+    <ClInclude Include="Gui\inc\Gui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
