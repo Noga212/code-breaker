@@ -18,5 +18,15 @@
     <ClCompile Include="code-breaker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Guess.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Guess.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    </ClInclude>
   </ItemGroup>
 </Project>
