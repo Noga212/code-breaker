@@ -149,7 +149,7 @@ void MyFrame::OnExit(wxCommandEvent& event)
 
 void MyFrame::OnAbout(wxCommandEvent& event) 
 {
-    wxMessageBox("This is a computer game version of the Mastermind game",
+    wxMessageBox("The computer has generated a code, you need to guess it! \n guess a combination and you will get hints : \n white for a color that exists in the code but not in the right place, and black for a color that is in its right place.\nUse the hints as you prograss to solve the code with the least amount of guesses you can!",
         "About Mastermind", wxOK | wxICON_INFORMATION);
 }
 
