@@ -1,5 +1,9 @@
 #include "Gui.h"
 
+#define GRID_SIZE 8
+#define FEEDBACK_COLOMNS 4
+#define NUM_OF_GUESSES 10
+
 class MyApp : public wxApp 
 {
 public:
@@ -31,9 +35,9 @@ bool MyApp::OnInit()
 
 MyFrame::MyFrame()
     : wxFrame(nullptr, wxID_ANY, "Code Breaker"),
-    currentGuessRow(0) 
+    currentGuessRow(0)
 {
-
+    m_games.push_back(Game());
     // Create a wxStaticText for the "Code Breaker" title/logo
     wxStaticText* logoText = new wxStaticText(this, wxID_ANY, "Code Breaker");
 
@@ -65,16 +69,26 @@ MyFrame::MyFrame()
 
     // Setup grid
     grid = new wxGrid(this, wxID_ANY);
-    grid->CreateGrid(10, 5);  // 10 guesses, 4 pegs + 1 for feedback
+    grid->CreateGrid(NUM_OF_GUESSES, GRID_SIZE);  // 10 guesses, 4 pegs + 1 for feedback
 
     grid->SetColLabelValue(0, "Color 1");
     grid->SetColLabelValue(1, "Color 2");
     grid->SetColLabelValue(2, "Color 3");
     grid->SetColLabelValue(3, "Color 4");
 
+    for (int i = FEEDBACK_COLOMNS; i < grid->GetNumberCols(); ++i)
+    {
+        grid->SetColLabelValue(i, "");
+        grid->SetColSize(i, 30);
+    }
 
-    grid->SetColLabelValue(4, "Feedback");  // Label for the feedback column
-    grid->SetColSize(4, 170); //TODO: hardcoded - change by using a dedicated function
+    for (int row = 0; row < grid->GetNumberRows(); ++row) 
+    {
+        for (int col = 0; col < grid->GetNumberCols(); ++col) 
+        {
+            grid->SetCellBackgroundColour(row, col, wxColour(200, 200, 200));
+        }
+    }
 
     // Color buttons
     redButton = new wxButton(this, ID_ButtonRed, "Red");
@@ -126,8 +140,6 @@ MyFrame::MyFrame()
     sizer->Add(undoButton, 0, wxALIGN_CENTER | wxALL, 5);
 
     SetSizer(sizer);
-
-    secretCode = { "Red", "Green", "Blue", "Yellow" }; // Red, Green, Blue, Yellow
 }
 
 void MyFrame::OnExit(wxCommandEvent& event) 
@@ -144,95 +156,73 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 void MyFrame::OnColorButton(wxCommandEvent& event)
 {
 
-    if (currentGuess.size() < 4) {
+    if (currentGuess.size() < m_games[m_games.size() - 1].getCode().size()) {
         wxButton* clickedButton = dynamic_cast<wxButton*>(event.GetEventObject());
         if (clickedButton == redButton) 
         {
-            currentGuess.push_back("Red");
+            currentGuess.push_back(red);
             grid->SetCellBackgroundColour(currentGuessRow, currentGuess.size() - 1, wxColour(255, 0, 0));
         } 
         else if (clickedButton == greenButton) 
         {
-            currentGuess.push_back("Green");
+            currentGuess.push_back(green);
             grid->SetCellBackgroundColour(currentGuessRow, currentGuess.size() - 1, wxColour(0, 255, 0));
 
         } 
         else if (clickedButton == blueButton) 
         {
-            currentGuess.push_back("Blue");
+            currentGuess.push_back(blue);
             grid->SetCellBackgroundColour(currentGuessRow, currentGuess.size() - 1, wxColour(0, 0, 255));
 
         } 
         else if (clickedButton == yellowButton) 
         {
-            currentGuess.push_back("Yellow");
+            currentGuess.push_back(yellow);
             grid->SetCellBackgroundColour(currentGuessRow, currentGuess.size() - 1, wxColour(255, 255, 0));
 
         }
         else if (clickedButton == purpleButton)
         {
-            currentGuess.push_back("Purple");
+            currentGuess.push_back(purple);
             grid->SetCellBackgroundColour(currentGuessRow, currentGuess.size() - 1, wxColour(128, 0, 128));
 
         }
         else if (clickedButton == orangeButton)
         {
-            currentGuess.push_back("Orange");
+            currentGuess.push_back(orange);
             grid->SetCellBackgroundColour(currentGuessRow, currentGuess.size() - 1, wxColour(255, 165, 0));
 
         }
-        grid->SetCellValue(currentGuessRow, currentGuess.size() - 1, currentGuess.back());
+        grid->ForceRefresh();
     }
 }
 
 void MyFrame::OnSubmit(wxCommandEvent& event) 
 {
-    if (currentGuessRow < 10) 
+    unsigned int numOfColors = m_games[m_games.size() - 1].getCode().size();
+    Guess guessToSubmit(currentGuess);
+    if (currentGuessRow < NUM_OF_GUESSES)
     {
-        if (currentGuess.size() == 4) 
+        if (currentGuess.size() == numOfColors)
         {
-            std::vector<bool> exactMatches(4, false);  
-            std::vector<bool> colorMatches(4, false);  
-            int correctPosition = 0;
-            int correctColor = 0;
+            guessToSubmit.calculateHint(m_games[m_games.size() - 1].getCode());
+            unsigned int blackHint = guessToSubmit.getBlack();
+            unsigned int whiteHint = guessToSubmit.getWhite();
 
-            for (int i = 0; i < 4; ++i) 
+            for (unsigned int i = 0; i < blackHint; ++i)
             {
-                if (currentGuess[i] == secretCode[i]) 
-                {
-                    exactMatches[i] = true;
-                    correctPosition++;
-                }
+                grid->SetCellBackgroundColour(currentGuessRow, i + numOfColors, wxColour(0,0,0));
             }
-
-            for (int i = 0; i < 4; ++i) 
+            for (unsigned int i = 0; i < whiteHint; ++i)
             {
-                if (!exactMatches[i]) 
-                {
-                    for (int j = 0; j < 4; ++j) 
-                    {
-                        if (!exactMatches[j] && !colorMatches[j] && currentGuess[i] == secretCode[j]) 
-                        {
-                            colorMatches[j] = true;
-                            correctColor++;
-                            break;
-                        }
-                    }
-                }
+                grid->SetCellBackgroundColour(currentGuessRow, i + blackHint + numOfColors, wxColour(255, 255, 255));
             }
-
-            for (int i = 0; i < 4; ++i) 
-            {
-                grid->SetCellValue(currentGuessRow, i, currentGuess[i]);
-            }
-
-            wxString feedback = wxString::Format("CorrPosition: %d, CorrColor: %d", correctPosition, correctColor);
-            grid->SetCellValue(currentGuessRow, 4, feedback);
+            grid->ForceRefresh();
 
             currentGuessRow++;
             currentGuess.clear();
 
-            if (correctPosition == 4)
+            if (guessToSubmit.getBlack() == numOfColors)
             {
                 OnWin();
 
@@ -286,20 +276,21 @@ void MyFrame::OnUndo(wxCommandEvent& event)
 
 void MyFrame::ResetGame()
 {
+    // Generate a new secret code
+    m_games.push_back(Game());
+
     // Clear the grid
     for (int row = 0; row < grid->GetNumberRows(); ++row) {
-        for (int col = 0; col < grid->GetNumberCols(); ++col) {
+        for (int col = 0; col < grid->GetNumberCols(); ++col) 
+        {
             grid->SetCellValue(row, col, "");
-            grid->SetCellBackgroundColour(row, col, *wxWHITE); // Reset the background color
+            grid->SetCellBackgroundColour(row, col, wxColour(200, 200, 200)); // Reset the background color
         }
     }
 
     // Reset the guess row and the current guess
     currentGuessRow = 0;
     currentGuess.clear();
-
-    // Generate a new secret code
-    secretCode = { "Red", "Green", "Blue", "Yellow" };  // You can randomize this if needed
 
     // Force grid refresh to apply changes immediately
     grid->ForceRefresh();

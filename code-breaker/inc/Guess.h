@@ -17,10 +17,20 @@ public:
 	Guess(std::vector<colors> theGuess);
 	std::vector<colors>  getCombination();
 	void calculateHint(std::vector<colors> code);
-	std::vector<hints> getHint();
+	
+	unsigned int inline getBlack()
+	{
+		return m_hintBlack;
+	}
+
+	unsigned int inline getWhite()
+	{
+		return m_hintWhite;
+	}
 
 
 private:
 	const std::vector<colors> m_combination;
-	std::vector<hints> m_hint;			//note: the hint is all blacks first and then all whites. hint size <= combination size
+	unsigned int m_hintBlack;			//note: the hint is all blacks first and then all whites. hint size <= combination size
+	unsigned int m_hintWhite;
 };

@@ -36,35 +36,21 @@ void Guess::calculateHint(std::vector<colors> code)
 		{
 			for (unsigned int j = 0; j < codeCopy.size(); ++j)
 			{
-				if (codeCopy[j] == NA)
+				if (codeCopy[j] != NA)
 				{
 					if (combinationCopy[i] == codeCopy[j])
 					{
 						++numOfWhite;
 						codeCopy[j] = NA;
+						break;
 					}
 				}
 			}
 		}
 	}
-	int i = 0;
-	while (numOfBlack != 0)
-	{
-		m_hint[i] = black;
-		++i;
-		--numOfBlack;
-	}
-	while (numOfWhite != 0)
-	{
-		m_hint[i] = white;
-		++i;
-		--numOfWhite;
-	}
+	m_hintBlack = numOfBlack;
+	m_hintWhite = numOfWhite;
+	
 	return;
 
-}
-
-std::vector<hints> Guess::getHint()
-{
-	return m_hint;
 }

@@ -3,8 +3,10 @@
 #include <wx/grid.h>
 #include <vector>
 #include <string>
+#include "Game.h"
 
-class MyFrame : public wxFrame {
+class MyFrame : public wxFrame 
+{
 public:
     MyFrame();
 
@@ -28,8 +30,9 @@ private:
 
     wxButton* submitButton; // Button to submit guess
     wxButton* undoButton;
-
+    
+    std::vector<Game> m_games;
     std::vector<std::string> secretCode; // The secret code
-    std::vector<std::string> currentGuess; // Store the user's current guess
+    std::vector<colors> currentGuess; // Store the user's current guess
     int currentGuessRow; // Tracks the current guess row
 };
