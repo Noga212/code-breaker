@@ -266,7 +266,7 @@ void MyFrame::OnUndo(wxCommandEvent& event)
         currentGuess.pop_back();
 
         // Clear the grid cell corresponding to the last guess
-        grid->SetCellBackgroundColour(currentGuessRow, lastColorIndex, *wxWHITE);  // Reset the background color
+        grid->SetCellBackgroundColour(currentGuessRow, lastColorIndex, wxColour(200, 200, 200));  // Reset the background color
         grid->SetCellValue(currentGuessRow, lastColorIndex, "");  // Clear the text in the cell
 
         // Force grid refresh to apply changes immediately
