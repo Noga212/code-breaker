@@ -3,6 +3,7 @@ This is a computer game version of the master-mind game.
 The computer generates a code, a combination of colors. The length of the combination and the number of colors can be changed (in future versions) and will be known to the player.
 The player then guesses the code, and gets hints about the guess - white for a color that exists in the code but not in the right place, and black for a color that is in its right place.
 The player needs to discover the code in the least amount of guesses!
+download version 0.1 here: https://github.com/Noga212/code-breaker?tab=readme-ov-file
 
 # install
 ## 1. Build the solution
