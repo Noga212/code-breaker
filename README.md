@@ -3,12 +3,12 @@ This is a computer game version of the master-mind game.
 The computer generates a code, a combination of colors. The length of the combination and the number of colors can be changed (in future versions) and will be known to the player.
 The player then guesses the code, and gets hints about the guess - white for a color that exists in the code but not in the right place, and black for a color that is in its right place.
 The player needs to discover the code in the least amount of guesses!
-download version 0.1 here: https://github.com/Noga212/code-breaker?tab=readme-ov-file
+download version 0.1 here: [download](https://github.com/Noga212/code-breaker/releases/download/version_0.1/codeBreaker0.1.exe) for computers (windows) only.
 
 # install
 ## 1. Build the solution
 1. Download/clone the repo.
-2. Download from https://github.com/wxWidgets/wxWidgets/releases/tag/v3.2.6 the headers and libs for vc14x: wxMSW-3.2.6_vc14x_ReleaseDLL, wxMSW-3.2.6_vc14x_Dev, wxWidgets-3.2.6-headers
+2. Download the [headers and libs](https://github.com/wxWidgets/wxWidgets/releases/tag/v3.2.6) for vc14x: wxMSW-3.2.6_vc14x_ReleaseDLL, wxMSW-3.2.6_vc14x_Dev, wxWidgets-3.2.6-headers
 3. In the folder vxwidgets - extract wxwidgets files.
 4. Make sure both dev and releaseDLL are presented in the vc14x_dll folder
 5. Compile in release x32 mode.
